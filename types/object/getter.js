@@ -9,7 +9,7 @@
  *      -   {object}.get('innerObject.property')
  *
  * @author  Arturo Martinez 'Wolfchamane'
- * @version 1.0.00
+ * @version 1.0.01
  *
  * @params  property {String} to be retrieved
  * @returns {Object|undefined}
@@ -18,24 +18,27 @@ Object.prototype.get = function(property)
 {
     var value,
         ref = property;
-    if (ref.lastIndexOf('.') !== -1)
+    if (ref)
     {
-        property = property.split('.');
-        ref = property.shift();
-        ref = this[ref];
-        if ('object' === typeof ref)
+        if ((typeof ref === 'string') && (ref.lastIndexOf('.') !== -1))
         {
-            value = ref.get.apply(ref, [property.join('.')]);
+            var aux = property.split('.');
+            ref = aux.shift();
+            ref = this[ref];
+            if ('object' === typeof ref)
+            {
+                value = ref.get.apply(ref, [aux.join('.')]);
+            }
         }
-    }
-    else if (!this.hasOwnProperty(property))
-    {
-        ref = this.__proto__;
-        value = ref.get.apply(ref, [property]);
-    }
-    else if (this.hasOwnProperty(property))
-    {
-        value = this[property];
+        else if (!this.hasOwnProperty(ref))
+        {
+            ref = this.__proto__;
+            value = ref.get.apply(ref, [property]);
+        }
+        else if (this.hasOwnProperty(ref))
+        {
+            value = this[property];
+        }
     }
     return value;
 };
